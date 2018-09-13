@@ -5,6 +5,7 @@ import datetime
 import subprocess
 import MySQLdb as mariadb
 import dateutil.parser
+import os, errno, sys
 
 
 def run_commands(linux_cmd):
@@ -40,10 +41,22 @@ def del_cloud_files(cloud_path, del_command):
 
 
 # MySQL settings and other constants
-backup_date = datetime.datetime.now().strftime("%Y_%m_%d_%H")
+backup_date = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M")
 backup_dir = "/root/backups"
 gdrive_path = "gdrive_remote:Doramax264/DB_Backups/"
 yandex_path = "yandex:Doramax264/DB_Backups/"
+
+# print output to file
+backup_log_folder = '/var/log/dx_db_backups'
+output_log_file = '{0}/db_bk_{1}.log'.format(backup_log_folder, backup_date)
+try:
+    os.makedirs(backup_log_folder)
+except OSError as e:
+    if e.errno != errno.EEXIST:
+        raise e
+orig_stdout = sys.stdout
+f = open(output_log_file, 'w')
+sys.stdout = f
 
 # Create backup directory and set permissions
 print "Date:", backup_date, "\n"
@@ -88,5 +101,7 @@ del_cloud_files(yandex_path, yandex_del)
 # Delete backup files older than 10 days in VPS
 del_cmd = "find /root/backups -mtime +10 -exec rm {} \;"
 run_commands(del_cmd)
+print "\n"
 
-#print "\n======================================================================================"
+sys.stdout = orig_stdout
+f.close()
