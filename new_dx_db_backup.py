@@ -8,6 +8,22 @@ import dateutil.parser
 import os, errno, sys
 
 
+class Logger(object):
+    def __init__(self, filename):
+        self.terminal = sys.stdout
+        self.log = open(filename, "a")
+
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)
+
+    def flush(self):
+        # this flush method is needed for python 3 compatibility.
+        # this handles the flush command by doing nothing.
+        # you might want to specify some extra behavior here.
+        pass
+
+
 def run_commands(linux_cmd):
     p = subprocess.Popen(linux_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     out, error = p.communicate()
@@ -46,7 +62,7 @@ backup_dir = "/root/backups"
 gdrive_path = "gdrive_remote:Doramax264/DB_Backups/"
 yandex_path = "yandex:Doramax264/DB_Backups/"
 
-# print output to file
+# print output to file and stdout
 backup_log_folder = '/var/log/dx_db_backups'
 output_log_file = '{0}/db_bk_{1}.log'.format(backup_log_folder, backup_date)
 try:
@@ -54,9 +70,7 @@ try:
 except OSError as e:
     if e.errno != errno.EEXIST:
         raise e
-orig_stdout = sys.stdout
-f = open(output_log_file, 'w')
-sys.stdout = f
+sys.stdout = Logger(output_log_file)
 
 # Create backup directory and set permissions
 print "Date:", backup_date, "\n"
@@ -72,8 +86,9 @@ conn.close()
 
 # Backup and compress each database
 bk_taken = []
+default_dbs = ['information_schema', 'performance_schema', 'mysql']
 for database in mysql_databases:
-    if database != "information_schema" and database != "performance_schema" and database != "mysql":
+    if database not in default_dbs:
         backup_name = "{0}-{1}.gz".format(database, backup_date)
         print "Creating backup of {0} database: {1}".format(database, backup_name)
         bk_taken.append(backup_name)
@@ -102,6 +117,3 @@ del_cloud_files(yandex_path, yandex_del)
 del_cmd = "find /root/backups -mtime +10 -exec rm {} \;"
 run_commands(del_cmd)
 print "\n"
-
-sys.stdout = orig_stdout
-f.close()
