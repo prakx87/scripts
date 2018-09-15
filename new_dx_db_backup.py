@@ -119,7 +119,7 @@ for bk_file in bk_taken:
     yandex_cmd = "rclone copy {0}{1} {2} -v --log-file /root/scripts/backup_log.txt".format(gdrive_path, bk_file,
                                                                                             yandex_path)
     #run_commands(gdrive_cmd)
-    upload_gdrive_file(bk_file)
+    upload_gdrive_file('/root/backups/' + bk_file)
     run_commands(yandex_cmd)
 
 # Delete backup files older than 60 days in Cloud
