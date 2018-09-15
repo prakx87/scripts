@@ -9,11 +9,6 @@ import os, errno, sys
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 
-gauth = GoogleAuth()
-gauth.LocalWebserverAuth()
-
-drive = GoogleDrive(gauth)
-
 
 class Logger(object):
     def __init__(self, filename):
@@ -71,6 +66,11 @@ def del_cloud_files(cloud_path, del_command):
                 run_commands(del_file_cmd)
     return
 
+
+# set google drive api for upload
+gauth = GoogleAuth()
+gauth.LocalWebserverAuth()
+drive = GoogleDrive(gauth)
 
 # MySQL settings and other constants
 backup_date = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M")
