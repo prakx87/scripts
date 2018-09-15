@@ -40,9 +40,11 @@ def run_commands(linux_cmd):
     return
 
 
-def upload_gdrive_file(path_to_file):
-    file1 = drive.CreateFile()
-    file1.SetContentFile(path_to_file)
+def upload_gdrive_file(working_dir, bkfilename):
+    os.chdir(working_dir)
+    fid = '0B6VheyHPSfoJRjMwbERBdW52ZTQ'
+    file1 = drive.CreateFile({"parents": [{"kind": "drive#fileLink", "id": fid}]}
+    file1.SetContentFile(bkfilename)
     file1.Upload()
     return
 
@@ -119,7 +121,7 @@ for bk_file in bk_taken:
     yandex_cmd = "rclone copy {0}{1} {2} -v --log-file /root/scripts/backup_log.txt".format(gdrive_path, bk_file,
                                                                                             yandex_path)
     #run_commands(gdrive_cmd)
-    upload_gdrive_file('/root/backups/' + bk_file)
+    upload_gdrive_file('/root/backups', bk_file)
     run_commands(yandex_cmd)
 
 # Delete backup files older than 60 days in Cloud
