@@ -6,6 +6,8 @@ import subprocess
 import MySQLdb as mariadb
 import dateutil.parser
 import os, errno, sys
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
 
 
 class Logger(object):
@@ -33,6 +35,15 @@ def run_commands(linux_cmd):
     return
 
 
+def upload_gdrive_file(working_dir, bkfilename):
+    os.chdir(working_dir)
+    fid = '0B6VheyHPSfoJRjMwbERBdW52ZTQ'
+    file1 = drive.CreateFile({"parents": [{"kind": "drive#fileLink", "id": fid}]})
+    file1.SetContentFile(bkfilename)
+    file1.Upload()
+    return
+
+
 def del_cloud_files(cloud_path, del_command):
     cloud_type = cloud_path.split(':')[0]
     dp = subprocess.Popen(del_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -55,6 +66,11 @@ def del_cloud_files(cloud_path, del_command):
                 run_commands(del_file_cmd)
     return
 
+
+# set google drive api for upload
+gauth = GoogleAuth()
+gauth.LocalWebserverAuth()
+drive = GoogleDrive(gauth)
 
 # MySQL settings and other constants
 backup_date = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M")
@@ -104,7 +120,8 @@ for bk_file in bk_taken:
                                                                                                        gdrive_path)
     yandex_cmd = "rclone copy {0}{1} {2} -v --log-file /root/scripts/backup_log.txt".format(gdrive_path, bk_file,
                                                                                             yandex_path)
-    run_commands(gdrive_cmd)
+    #run_commands(gdrive_cmd)
+    upload_gdrive_file('/root/backups', bk_file)
     run_commands(yandex_cmd)
 
 # Delete backup files older than 60 days in Cloud
