@@ -43,7 +43,7 @@ def run_commands(linux_cmd):
 def upload_gdrive_file(working_dir, bkfilename):
     os.chdir(working_dir)
     fid = '0B6VheyHPSfoJRjMwbERBdW52ZTQ'
-    file1 = drive.CreateFile({"parents": [{"kind": "drive#fileLink", "id": fid}]}
+    file1 = drive.CreateFile({"parents": [{"kind": "drive#fileLink", "id": fid}]})
     file1.SetContentFile(bkfilename)
     file1.Upload()
     return
