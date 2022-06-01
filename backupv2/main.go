@@ -8,6 +8,10 @@ import(
 
 	"github.com/jamf/go-mysqldump"
 	"github.com/go-sql-driver/mysql"
+	// "golang.org/x/net/context"
+	// "golang.org/x/oauth2"
+	// "golang.org/x/oauth2/google"
+	// "google.golang.org/api/drive/v3"
 )
 
 var (
@@ -33,9 +37,9 @@ func main() {
 	// setup mysql connection object
 	fmt.Println("Create MySQL connection")
 	config := mysql.NewConfig()
-	config.User = "your-user"
-	config.Passwd = "pass"
-	config.DBName = "dxpass"
+	config.User = "backup_user"
+	config.Passwd = "NQNRQw4tTbvDu7n8"
+	config.DBName = "dorama_vbull"
 	config.Net = "tcp"
 	config.Addr = "127.0.0.1"
 

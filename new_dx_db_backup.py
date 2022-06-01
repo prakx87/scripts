@@ -61,7 +61,7 @@ def del_cloud_files(cloud_path, del_command):
             oldbktime = dateutil.parser.parse(bktime)
             time_between_bks = datetime.datetime.now() - oldbktime
             if time_between_bks.days > 60:
-                print "Deleting {0} backup: {1}".format(cloud_type, oldbk)
+                print("Deleting {0} backup: {1}".format(cloud_type, oldbk))
                 del_file_cmd = "rclone delete {0}{1}".format(cloud_path, oldbk)
                 run_commands(del_file_cmd)
     return
@@ -89,7 +89,7 @@ except OSError as e:
 sys.stdout = Logger(output_log_file)
 
 # Create backup directory and set permissions
-print "Date:", backup_date, "\n"
+print("Date:", backup_date, "\n")
 
 # Get MySQL databases
 conn = mariadb.connect(host="localhost", read_default_file="/etc/my.cnf.d/backup.cnf")
@@ -106,7 +106,7 @@ default_dbs = ['information_schema', 'performance_schema', 'mysql']
 for database in mysql_databases:
     if database not in default_dbs:
         backup_name = "{0}-{1}.gz".format(database, backup_date)
-        print "Creating backup of {0} database: {1}".format(database, backup_name)
+        print("Creating backup of {0} database: {1}".format(database, backup_name))
         bk_taken.append(backup_name)
         cmd1 = "mysqldump --defaults-extra-file=/etc/my.cnf.d/backup.cnf {0} | gzip > {1}/{2}".format(database, backup_dir, backup_name)
         run_commands(cmd1)
@@ -115,7 +115,7 @@ for database in mysql_databases:
 
 # Copy the backup files to Google drive and Yandex
 for bk_file in bk_taken:
-    print "Copying backup {0} to Cloud drives.".format(bk_file)
+    print("Copying backup {0} to Cloud drives.".format(bk_file))
     gdrive_cmd = "rclone copy /root/backups/{0} {1} -v --log-file /root/scripts/backup_log.txt".format(bk_file,
                                                                                                        gdrive_path)
     yandex_cmd = "rclone copy {0}{1} {2} -v --log-file /root/scripts/backup_log.txt".format(gdrive_path, bk_file,
@@ -133,4 +133,4 @@ del_cloud_files(yandex_path, yandex_del)
 # Delete backup files older than 10 days in VPS
 del_cmd = "find /root/backups -mtime +10 -exec rm {} \;"
 run_commands(del_cmd)
-print "\n"
+print("\n")
