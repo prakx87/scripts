@@ -37,8 +37,8 @@ func main() {
 	// setup mysql connection object
 	fmt.Println("Create MySQL connection")
 	config := mysql.NewConfig()
-	config.User = "backup_user"
-	config.Passwd = "NQNRQw4tTbvDu7n8"
+	config.User = ""
+	config.Passwd = ""
 	config.DBName = "dorama_vbull"
 	config.Net = "tcp"
 	config.Addr = "127.0.0.1"
