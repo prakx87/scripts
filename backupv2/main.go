@@ -37,8 +37,8 @@ func main() {
 	// setup mysql connection object
 	fmt.Println("Create MySQL connection")
 	config := mysql.NewConfig()
-	config.User = ""
-	config.Passwd = ""
+	config.User = "backup_user"
+	config.Passwd = "NQNRQw4t@TbvDu7n8"
 	config.DBName = "dorama_vbull"
 	config.Net = "tcp"
 	config.Addr = "127.0.0.1"
@@ -48,7 +48,8 @@ func main() {
 
 	db, err := sql.Open("mysql", config.FormatDSN())
 	if err != nil {
-		panic(err.Error())
+		fmt.Println("Error opening database: ", err)
+		return
 	}
 
 	defer db.Close()
@@ -58,8 +59,17 @@ func main() {
 	// use mysql object to take dump
 	dumper, err := mysqldump.Register(db, dumpDir, dumpFilenameFormat)
 	if err != nil {
-		panic(err.Error())
+		fmt.Println("Error registering databse:", err)
+		return
 	}
+
+	// Dump database to file
+	resultFilename, err := dumper.Dump()
+	if err != nil {
+		fmt.Println("Error dumping:", err)
+		return
+	}
+	fmt.Printf("File is saved to %s", resultFilename)
 
 	fmt.Printf("DB taken successfully and saved at %s", dumpFilenameFormat)
 	dumper.Close()
