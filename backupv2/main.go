@@ -64,7 +64,7 @@ func main() {
 	}
 
 	// Dump database to file
-	resultFilename, err := dumper.Out.Write()
+	resultFilename := dumper.Dump()
 	if err != nil {
 		fmt.Println("Error dumping:", err)
 		return
