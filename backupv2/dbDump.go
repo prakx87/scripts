@@ -26,8 +26,8 @@ func takeDump(db string) {
 
 	config := dumpInf.createDbConfig(db)
 	dbconn := openDbConn(config)
-	// dumpName := getDumpFileName(db)
-	startDump(dbconn, dumpInf.dumpPath)
+	dumpName := getDumpFileName(db)
+	startDump(dbconn, dumpInf.dumpPath, dumpName)
 }
 
 func getConfigCreds(filePath string) map[string]string {
@@ -64,9 +64,7 @@ func (d dumpDetails) createDbConfig(dbName string) *mysql.Config {
 }
 
 func getDumpFileName(dbName string) string {
-	t := time.Now()
-	const layoutDUMP = "20060102150405"
-	return dbName + "_" + t.Format(layoutDUMP)
+	return dbName + "_" + "20060102150405"
 }
 
 func openDbConn(config *mysql.Config) *sql.DB {
@@ -81,10 +79,9 @@ func openDbConn(config *mysql.Config) *sql.DB {
 	return db
 }
 
-func startDump(dbconn *sql.DB, dumpDir string) {
+func startDump(dbconn *sql.DB, dumpDir string, dumpFilename string) {
 	// use mysql object to take dump
-	const layoutDUMP = "_20060102150405"
-	dumper, err := mysqldump.Register(dbconn, dumpDir, layoutDUMP)
+	dumper, err := mysqldump.Register(dbconn, dumpDir, dumpFilename)
 	if err != nil {
 		fmt.Println("Error registering databse:", err)
 		os.Exit(1)
@@ -99,7 +96,7 @@ func startDump(dbconn *sql.DB, dumpDir string) {
 		os.Exit(1)
 	}
 
-	fmt.Printf("DB taken successfully and saved at %s", dumpDir)
+	// fmt.Printf("DB taken successfully and saved at %s/%s", dumpDir, dumpFilename)
 	dumper.Close()
 	dbconn.Close()
 }
