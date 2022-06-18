@@ -66,7 +66,7 @@ func (d dumpDetails) createDbConfig(dbName string) *mysql.Config {
 func getDumpFileName(dbName string) string {
 	t := time.Now()
 	const layoutDUMP = "20060102150405"
-	return dbName + "-" + t.Format(layoutDUMP) + ".sql"
+	return dbName + "_" + t.Format(layoutDUMP) + ".sql"
 }
 
 func openDbConn(config *mysql.Config) *sql.DB {
@@ -97,8 +97,11 @@ func startDump(dbconn *sql.DB, dumpDir string, dumpFilename string) {
 		os.Exit(1)
 	}
 
-	file := dumper.Out.(*os.File)
-	fmt.Printf("File is saved to %s", file.Name())
+	if file, ok := dumper.Out.(*os.File); ok {
+		fmt.Println("File is saved to", file.Name())
+	} else {
+		fmt.Println("It's not part of *os.File, but dump is done")
+	}
 
 	// fmt.Printf("DB taken successfully and saved at %s/%s", dumpDir, dumpFilename)
 	dumper.Close()
