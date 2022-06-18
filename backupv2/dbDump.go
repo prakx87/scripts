@@ -59,6 +59,7 @@ func (d dumpDetails) createDbConfig(dbName string) *mysql.Config {
 	config.DBName = dbName
 	config.Net = "tcp"
 	config.Addr = d.dbIp
+	config.ParseTime = true
 
 	return config
 }
@@ -66,7 +67,7 @@ func (d dumpDetails) createDbConfig(dbName string) *mysql.Config {
 func getDumpFileName(dbName string) string {
 	t := time.Now()
 	const layoutDUMP = "20060102150405"
-	return dbName + "_" + t.Format(layoutDUMP) + ".sql"
+	return dbName + "_" + t.Format(layoutDUMP)
 }
 
 func openDbConn(config *mysql.Config) *sql.DB {
@@ -92,15 +93,10 @@ func startDump(dbconn *sql.DB, dumpDir string, dumpFilename string) {
 	fmt.Println("Registered database for MySQL dump")
 
 	// Dump database to file
-	if err := dumper.Dump(); err != nil {
-		fmt.Println("Error dumping:", err)
+	outErr := dumper.Dump()
+	if err != nil {
+		fmt.Println("Error dumping:", outErr)
 		os.Exit(1)
-	}
-
-	if file, ok := dumper.Out.(*os.File); ok {
-		fmt.Println("File is saved to", file.Name())
-	} else {
-		fmt.Println("It's not part of *os.File, but dump is done")
 	}
 
 	// fmt.Printf("DB taken successfully and saved at %s/%s", dumpDir, dumpFilename)
