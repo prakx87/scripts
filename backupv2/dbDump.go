@@ -95,7 +95,7 @@ func startDump(dbconn *sql.DB, dumpDir string, dumpFilename string) {
 		os.Exit(1)
 	}
 
-	// fmt.Printf("DB taken successfully and saved at %s/%s", dumpDir, dumpFilename)
+	fmt.Printf("DB taken successfully and saved at %s/%s\n", dumpDir, dumpFilename)
 	dumper.Close()
 	dbconn.Close()
 }
