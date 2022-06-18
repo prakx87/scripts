@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/bigkevmcd/go-configparser"
 	"github.com/go-sql-driver/mysql"
