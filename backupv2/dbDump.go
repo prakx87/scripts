@@ -86,16 +86,18 @@ func startDump(dbconn *sql.DB, dumpDir string, dumpFilename string) {
 	dumper, err := mysqldump.Register(dbconn, dumpDir, dumpFilename)
 	if err != nil {
 		fmt.Println("Error registering databse:", err)
-		return
+		os.Exit(1)
 	}
 
 	// Dump database to file
-	resultFilename := dumper.Dump()
-	if err != nil {
-		fmt.Println("Error dumping:", err)
-		return
+	error := dumper.Dump()
+	if error != nil {
+		fmt.Println("Error dumping:", error)
+		os.Exit(1)
 	}
-	fmt.Printf("File is saved to %s", resultFilename)
+
+	file := dumper.Out.(*os.File)
+	fmt.Printf("File is saved to %s", file.Name())
 
 	// fmt.Printf("DB taken successfully and saved at %s/%s", dumpDir, dumpFilename)
 	dumper.Close()
