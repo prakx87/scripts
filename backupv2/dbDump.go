@@ -89,10 +89,11 @@ func startDump(dbconn *sql.DB, dumpDir string, dumpFilename string) {
 		os.Exit(1)
 	}
 
+	fmt.Println("Registered database for MySQL dump")
+
 	// Dump database to file
-	error := dumper.Dump()
-	if error != nil {
-		fmt.Println("Error dumping:", error)
+	if err := dumper.Dump(); err != nil {
+		fmt.Println("Error dumping:", err)
 		os.Exit(1)
 	}
 
