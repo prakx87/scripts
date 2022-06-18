@@ -12,7 +12,6 @@ import (
 )
 
 type dumpDetails struct {
-	dbList     []string
 	dbIp       string
 	dbCredFile string
 	dumpPath   string
